@@ -1062,23 +1062,22 @@ bool DSK::Hexdecimal() {
 
 
 void DSK::RemoveFile ( int item ) {
-	char NomFic[ 16 ];
-	int i = item;
 	StDirEntry TabDir[ 64 ];
 	
 	for ( int j = 0; j < 64; j++ )
 		memcpy( &TabDir[ j ], GetInfoDirEntry( j ), sizeof( StDirEntry ));
-		
-	strcpy( NomFic, GetNomAmsdos( TabDir[ i ].Nom ) );
-	char *p ;
+
+	char CheckFic[12]; // User - Nom - Ext
+	memcpy( CheckFic, & TabDir[ item ], 12);
 	
-	do {
-		TabDir[ i ].User = USER_DELETED;
-		SetInfoDirEntry( i, &TabDir[ i ]);
-		p = GetNomAmsdos( TabDir[ ++i ].Nom) ;
-	} while ( ! strncmp( NomFic, p , max(strlen( p ), strlen( NomFic ) )) );
-	
-		
+	for (int i = item; i < 64; ++i ) {
+		if ( ! memcmp( CheckFic, &TabDir[ i ], 12) )
+		{
+			TabDir[ i ].User = USER_DELETED;
+			SetInfoDirEntry( i, &TabDir[ i ]);
+		}
+	}
+
 	return ;
 }
 
